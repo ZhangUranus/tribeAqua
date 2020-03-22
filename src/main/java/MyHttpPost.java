@@ -28,8 +28,7 @@ public class MyHttpPost {
     private static String url4 = null;
     private static String url5 = null;
     private static String numTreads = null;
-
-
+    
     public static void main(String[] args) throws Exception {
 
 
