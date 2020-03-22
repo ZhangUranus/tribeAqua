@@ -13,12 +13,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.apache.log4j.Logger;
 
 
 public class MyHttpPost {
 
-    private static String start = "2019-12-31";
-    private static String end = "2020-01-02";
+
+    private static Logger logger = Logger.getLogger(MyHttpPost.class);
+
+    private static String start = "1997-01-01";
+    private static String end = "2020-03-31";
 
     private static String url1 = "https://www.ctg.com.cn/eportal/ui?moduleId=8a2bf7cbd37c4d4f961ed1a6fbdf1ea8&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
     private static String url2 = "https://www.ctg.com.cn/eportal/ui?moduleId=3245f9208c304cfb99feb5a66e8a3e45&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
@@ -39,14 +45,25 @@ public class MyHttpPost {
         ArrayList<String> times = getTimeRange();
 
         ArrayList<String> urls = getURLs();
+        ExecutorService executor = Executors.newFixedThreadPool(100);
 
 
         for(String d: times){
 
             for(String u: urls){
-                webSpider(d, u);
+                executor.submit(() -> {
+                    try {
+                        webSpider(d, u);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+
             }
         }
+
+        logger.debug("----end-----");
 
     }
 
@@ -80,16 +97,16 @@ public class MyHttpPost {
 
             // print out URL details
 
-            System.out.println("----[DATE:"+d+"]-----------------------------------------------------------------");
+            //logger.debug("----[DATE:"+d+"]-----------------------------------------------------------------");
 
             // open the contents of the URL as an inputStream and print to stdout
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     myHttpConnection.getInputStream()));
             while ((inputString = in.readLine()) != null) {
-                System.out.println(inputString);
+                logger.debug("[DATE:"+d+"]"+inputString);
             }
             in.close();
-            System.out.println("-------------------------------------------------------------------------------------");
+            //logger.debug("-------------------------------------------------------------------------------------");
         } catch (Exception e) {
         }
     }
@@ -102,6 +119,7 @@ public class MyHttpPost {
         urls.add(url3);
         urls.add(url4);
         urls.add(url5);
+
         return urls;
     }
 
