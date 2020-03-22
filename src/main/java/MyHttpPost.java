@@ -28,13 +28,18 @@ public class MyHttpPost {
     private static String url4 = null;
     private static String url5 = null;
     private static String numTreads = null;
-    
+
     public static void main(String[] args) throws Exception {
 
 
         loadConfig();
 
 
+        getData();
+
+    }
+
+    private static void getData() throws ParseException {
         ArrayList<String> times = getTimeRange();
         ArrayList<String> urls = getURLs();
 
@@ -55,7 +60,6 @@ public class MyHttpPost {
 
             }
         }
-
     }
 
     private static void loadConfig() throws Exception{
