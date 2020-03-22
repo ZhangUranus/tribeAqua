@@ -1,7 +1,3 @@
-
-
-import org.apache.http.client.config.RequestConfig;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -34,7 +30,7 @@ public class MyHttpPost {
     private static String numTreads = null;
 
 
-    public static void main(String[] args) throws Exception, InterruptedException {
+    public static void main(String[] args) throws Exception {
 
 
         loadConfig();
