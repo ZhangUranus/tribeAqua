@@ -31,9 +31,8 @@ public class MyHttpPost {
     private static String url3 = null;
     private static String url4 = null;
     private static String url5 = null;
+    private static String numTreads = null;
 
-
-    private static final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(15000).setConnectionRequestTimeout(15000).build();
 
     public static void main(String[] args) throws Exception, InterruptedException {
 
@@ -43,7 +42,8 @@ public class MyHttpPost {
 
         ArrayList<String> times = getTimeRange();
         ArrayList<String> urls = getURLs();
-        ExecutorService executor = Executors.newFixedThreadPool(100);
+
+        ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(numTreads));
 
 
         for(String d: times){
@@ -61,8 +61,6 @@ public class MyHttpPost {
             }
         }
 
-        logger.debug("----end-----");
-
     }
 
     private static void loadConfig() throws Exception{
@@ -75,6 +73,7 @@ public class MyHttpPost {
         url3 = config.getString("url3");
         url4 = config.getString("url4");
         url5 = config.getString("url5");
+        numTreads = config.getString("numTreads");
 
     }
 
@@ -105,19 +104,13 @@ public class MyHttpPost {
             // get the response-code from the response
             myHttpConnection.getResponseCode();
 
-
-            // print out URL details
-
-            //logger.debug("----[DATE:"+d+"]-----------------------------------------------------------------");
-
-            // open the contents of the URL as an inputStream and print to stdout
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     myHttpConnection.getInputStream()));
             while ((inputString = in.readLine()) != null) {
                 logger.debug("[DATE:"+d+"]"+inputString);
             }
             in.close();
-            //logger.debug("-------------------------------------------------------------------------------------");
+
         } catch (Exception e) {
         }
     }
