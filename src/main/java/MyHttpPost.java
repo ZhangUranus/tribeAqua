@@ -1,21 +1,20 @@
 
 
 import org.apache.http.client.config.RequestConfig;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 
 
 public class MyHttpPost {
@@ -23,15 +22,15 @@ public class MyHttpPost {
 
     private static Logger logger = Logger.getLogger(MyHttpPost.class);
 
-    private static String start = "1997-01-01";
-    private static String end = "2020-03-31";
+    private static String start = null;
+    private static String end = null;
 
-    private static String url1 = "https://www.ctg.com.cn/eportal/ui?moduleId=8a2bf7cbd37c4d4f961ed1a6fbdf1ea8&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
-    private static String url2 = "https://www.ctg.com.cn/eportal/ui?moduleId=3245f9208c304cfb99feb5a66e8a3e45&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
+    private static String url1 = null;
+    private static String url2 = null;
 
-    private static String url3 = "https://www.ctg.com.cn/eportal/ui?moduleId=622108b56feb41b5a9d1aa358c52c236&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
-    private static String url4 = "https://www.ctg.com.cn/eportal/ui?moduleId=50c13b5c83554779aad47d71c1d1d8d8&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterFront!getDatas.action";
-    private static String url5 = "https://www.ctg.com.cn/eportal/ui?moduleId=4f104da2afbc4bf59babd925d469491b&&struts.portlet.mode=view&struts.portlet.action=/portlet/waterPicFront!getDatas.action";
+    private static String url3 = null;
+    private static String url4 = null;
+    private static String url5 = null;
 
 
     private static final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(15000).setConnectionRequestTimeout(15000).build();
@@ -39,11 +38,10 @@ public class MyHttpPost {
     public static void main(String[] args) throws Exception, InterruptedException {
 
 
-        // get the time range
+        loadConfig();
 
 
         ArrayList<String> times = getTimeRange();
-
         ArrayList<String> urls = getURLs();
         ExecutorService executor = Executors.newFixedThreadPool(100);
 
@@ -67,11 +65,24 @@ public class MyHttpPost {
 
     }
 
+    private static void loadConfig() throws Exception{
+
+        Configuration config = new PropertiesConfiguration("src/main/resources/config.properties");
+        start = config.getString("start");
+        end = config.getString("end");
+        url1 = config.getString("url1");
+        url2 = config.getString("url2");
+        url3 = config.getString("url3");
+        url4 = config.getString("url4");
+        url5 = config.getString("url5");
+
+    }
+
     private static void webSpider(String d, String u) throws MalformedURLException {
-        int responseCode = 0;
         String inputString = null;
 
         URL url = new URL(u);
+
         try {
             // Get an HttpURLConnection subclass object instead of URLConnection
             HttpURLConnection myHttpConnection = (HttpURLConnection) url.openConnection();
@@ -92,7 +103,7 @@ public class MyHttpPost {
             output.flush();
 
             // get the response-code from the response
-            responseCode = myHttpConnection.getResponseCode();
+            myHttpConnection.getResponseCode();
 
 
             // print out URL details
